@@ -6,7 +6,6 @@ from wagtail.admin.panels import FieldPanel, InlinePanel
 from modelcluster.fields import ParentalKey
 
 
-
 class HomePageAccordion(Orderable):
     """Model for storing title-content pairs in an accordion format."""
     id = models.BigAutoField(primary_key=True)
@@ -21,6 +20,7 @@ class HomePageAccordion(Orderable):
 
     def __str__(self):
         return self.title
+
 
 class HomePage(Page):
     """Model for the Home Page with an accordion section."""
