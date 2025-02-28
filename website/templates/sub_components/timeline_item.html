@@ -1,0 +1,41 @@
+<div class="timeline-item-content">
+    <span class="event-date">{{ value.event_date }}</span>
+    <h3 class="event-title">{{ value.event_title }}</h3>
+    <p class="event-description">{{ value.event_description }}</p>
+</div>
+
+<style>
+    .timeline-item-content {
+        padding: 15px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .timeline-item-content:hover {
+        transform: scale(1.03);
+    }
+
+    .event-date {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 5px;
+    }
+
+    .event-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .event-description {
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.5;
+    }
+</style>

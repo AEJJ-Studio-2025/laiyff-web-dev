@@ -1,0 +1,17 @@
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal{{ self.id }}">
+    {{ value.button_text }}
+</button>
+
+<div class="modal fade" id="modal{{ self.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ value.modal_title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {{ value.modal_content|richtext }}
+            </div>
+        </div>
+    </div>
+</div>
