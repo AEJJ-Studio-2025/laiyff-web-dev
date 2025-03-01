@@ -1,2 +1,4 @@
 Django>=5.1,<5.2
 wagtail>=6.4,<6.5
+wagtailmenus==3.1.9
+wagtail_modeladmin==2.1.0
