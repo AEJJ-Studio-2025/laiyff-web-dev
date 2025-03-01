@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-3">{{ page.title }}</h1>
+    <p class="mb-4">{{ page.intro_text }}</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for field in page.get_form_fields %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {% if field.type == "text" %}
+                    <input type="text" class="form-control" name="{{ field.label|slugify }}" required>
+                {% elif field.type == "email" %}
+                    <input type="email" class="form-control" name="{{ field.label|slugify }}" required>
+                {% elif field.type == "number" %}
+                    <input type="number" class="form-control" name="{{ field.label|slugify }}" required>
+                {% elif field.type == "textarea" %}
+                    <textarea class="form-control" name="{{ field.label|slugify }}" rows="4" required></textarea>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}
