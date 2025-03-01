@@ -21,16 +21,21 @@ class HomePageAccordion(Orderable):
     def __str__(self):
         return self.title
 
+from wagtail.fields import RichTextField
+from wagtail.admin.panels import FieldPanel
+
 
 class HomePage(Page):
     """Model for the Home Page with an accordion section."""
     heroSectionVideo = models.FileField(upload_to="videos/", blank=True, null=True)
     introText = models.TextField(blank=True, help_text="Description of Our Film Festival")
+    body = RichTextField(blank=True)
 
     content_panels = Page.content_panels + [
         FieldPanel('heroSectionVideo'),
         FieldPanel('introText'),
         InlinePanel('accordion_items', label="Accordion Sections"),  # Enables dynamic accordion items
+        FieldPanel('body'),
     ]
 
     def get_accordion_pairs(self):
