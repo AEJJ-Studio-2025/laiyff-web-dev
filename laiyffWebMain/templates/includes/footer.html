@@ -1,0 +1,70 @@
+<footer class="bg-light text-dark py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Address Section -->
+            <div class="col-md-4">
+                <h5 class="text-uppercase">Address</h5>
+                <p>{{ settings.base.NavigationSettings.address|safe }}</p>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="col-md-4">
+                <h5 class="text-uppercase">Contact</h5>
+                {% if settings.base.NavigationSettings.contact_email %}
+                    <p>Email: 
+                        <a href="mailto:{{ settings.base.NavigationSettings.contact_email }}" class="text-black text-decoration-none">
+                            {{ settings.base.NavigationSettings.contact_email }}
+                        </a>
+                    </p>
+                {% endif %}
+                {% if settings.base.NavigationSettings.contact_phone %}
+                    <p>Phone: 
+                        <a href="tel:{{ settings.base.NavigationSettings.contact_phone }}" class="text-black text-decoration-none">
+                            {{ settings.base.NavigationSettings.contact_phone }}
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+
+            <!-- Social Media Section -->
+            <div class="col-md-4">
+                <h5 class="text-uppercase">Follow Us</h5>
+                <ul class="list-unstyled">
+                    {% if settings.base.NavigationSettings.instagram_url %}
+                        <li class="mb-2">
+                            <a href="{{ settings.base.NavigationSettings.instagram_url }}" target="_blank" class="text-black">
+                                <i class="bi bi-instagram"></i> Instagram
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if settings.base.NavigationSettings.facebook_url %}
+                        <li class="mb-2">
+                            <a href="{{ settings.base.NavigationSettings.facebook_url }}" target="_blank" class="text-black">
+                                <i class="bi bi-facebook"></i> Facebook
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if settings.base.NavigationSettings.youtube_url %}
+                        <li class="mb-2">
+                            <a href="{{ settings.base.NavigationSettings.youtube_url }}" target="_blank" class="text-black">
+                                <i class="bi bi-youtube"></i> YouTube
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if settings.base.NavigationSettings.twitter_url %}
+                        <li class="mb-2">
+                            <a href="{{ settings.base.NavigationSettings.twitter_url }}" target="_blank" class="text-black">
+                                <i class="bi bi-twitter"></i> Twitter
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer Copyright -->
+        <div class="text-center mt-3">
+            <p class="mb-0">&copy; {{ settings.base.NavigationSettings.current_year }} Los Angeles International Youth Film Festival. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
