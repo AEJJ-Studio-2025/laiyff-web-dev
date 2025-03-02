@@ -86,7 +86,7 @@
                 {% for image in value.carousel_images %}
                     {% image image original as carousel_image %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <img src="{{ carousel_image.url }}" class="d-block w-100" alt="Carousel Image">
+                        <img src="{{ carousel_image.url }}" class="d-block w-100" alt="Carousel Image" style="height: 700px;">
                     </div>
                 {% endfor %}
             </div>
@@ -103,8 +103,9 @@
 
 {% elif value.hero_type == "jumbotron" %}
     <!-- Jumbotron -->
-    <section class="jumbotron text-center py-5" style="background: url('{{ value.background_image.url }}') center/cover no-repeat;">
-        <div class="container">
+    {% image value.background_image original as jumbotron_image %}
+    <section class="jumbotron text-center py-5" style="background: url('{{ jumbotron_image.url }}') center/cover no-repeat;">
+        <div class="container jumbotron-content">
             <h1 class="display-4">{{ value.title }}</h1>
             <p class="lead">{{ value.subtitle }}</p>
         </div>
