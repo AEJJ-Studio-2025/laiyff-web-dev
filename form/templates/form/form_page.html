@@ -2,35 +2,64 @@
 {% load wagtailcore_tags %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-3">{{ page.title }}</h1>
-    <p class="mb-4">{{ page.intro_text }}</p>
+<style>
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding-left: 25%;
+        padding-right: 20%;
+    }
+
+    .form-group {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+</style>
+<div class="form-container">
+    <h1>{{ page.title }}</h1>
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-success">{{ message }}</div>
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
         {% endfor %}
     {% endif %}
 
-    <form method="post">
-        {% csrf_token %}
-        
-        {% for field in page.get_form_fields %}
-            <div class="mb-3">
-                <label class="form-label">{{ field.label }}</label>
-                {% if field.type == "text" %}
-                    <input type="text" class="form-control" name="{{ field.label|slugify }}" required>
-                {% elif field.type == "email" %}
-                    <input type="email" class="form-control" name="{{ field.label|slugify }}" required>
-                {% elif field.type == "number" %}
-                    <input type="number" class="form-control" name="{{ field.label|slugify }}" required>
-                {% elif field.type == "textarea" %}
-                    <textarea class="form-control" name="{{ field.label|slugify }}" rows="4" required></textarea>
-                {% endif %}
-            </div>
-        {% endfor %}
+    {% if user.is_authenticated and user.is_active or request.is_preview %}
+        {% if form %}
+            <div>{{ page.intro|richtext }}</div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+            <form action="{% pageurl page %}" method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}  {# This will now have class="form-control" #}
+
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div class="text-danger">
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        {% else %}
+            <div>You can fill in the form only one time.</div>
+        {% endif %}
+    {% else %}
+        <div>To fill in the form, you must log in.</div>
+    {% endif %}
 </div>
+
 {% endblock %}
