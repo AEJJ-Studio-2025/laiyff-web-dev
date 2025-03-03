@@ -1,64 +1,108 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.contrib import messages
 from django.db import models
+from django.utils.text import slugify
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from wagtail.admin.panels import FieldPanel, InlinePanel
-from wagtail.models import Page, Orderable
 from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey
+from wagtail.admin.panels import (
+    FieldPanel, FieldRowPanel,
+    InlinePanel, MultiFieldPanel
+)
+from wagtail.fields import RichTextField
+from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
+from django.core.validators import RegexValidator
 
-# Model for form fields
-class FormField(Orderable):
-    FORM_FIELD_TYPES = [
-        ('text', 'Text Field'),
-        ('email', 'Email Field'),
-        ('number', 'Number Field'),
-        ('textarea', 'Text Area'),
-    ]
 
-    page = ParentalKey("FormPage", related_name="form_fields", on_delete=models.CASCADE)
-    label = models.CharField(max_length=255, help_text="Label for the input field")
-    field_type = models.CharField(max_length=20, choices=FORM_FIELD_TYPES, help_text="Type of input field")
+class FormField(AbstractFormField):
+    page = ParentalKey('FormPage', on_delete=models.CASCADE, related_name='custom_form_fields')
+
+    regex_validator = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Enter a regular expression for custom validation (do not apply to checkbox, dropdowns, multiple select, radio buttons, and hidden field)"
+    )
 
     panels = [
-        FieldPanel("label"),
-        FieldPanel("field_type"),
+        FieldPanel("label"), 
+        FieldPanel("field_type"), 
+        FieldPanel("required"), 
+        FieldPanel("choices"), 
+        FieldPanel("default_value"), 
+        FieldPanel("help_text"), 
+        FieldPanel("regex_validator")
     ]
 
-    def __str__(self):
-        return self.label
 
-# Model for storing form submissions
-class FormSubmission(models.Model):
-    page = models.ForeignKey("FormPage", on_delete=models.CASCADE, related_name="submissions")
-    submitted_at = models.DateTimeField(auto_now_add=True)
-    data = models.JSONField()  # Stores the form submission as JSON
+class FormPage(AbstractEmailForm):
+    intro = RichTextField(blank=True)
+    thank_you_text = RichTextField(blank=True)
 
-    def __str__(self):
-        return f"Submission on {self.submitted_at}"
-
-# Main Form Page Model
-class FormPage(Page):
-    intro_text = models.TextField(blank=True, help_text="Description of the form")
-
-    content_panels = Page.content_panels + [
-        FieldPanel('intro_text'),
-        InlinePanel('form_fields', label="Form Fields"),
+    content_panels = AbstractEmailForm.content_panels + [
+        FieldPanel('intro'),
+        InlinePanel('custom_form_fields', label="Form fields"),
+        FieldPanel('thank_you_text'),
+        MultiFieldPanel([
+            FieldRowPanel([
+                FieldPanel('from_address', classname="col6"),
+                FieldPanel('to_address', classname="col6"),
+            ]),
+            FieldPanel('subject'),
+        ], "Email"),
     ]
+
+    template = "form/form_page.html"
 
     def get_form_fields(self):
-        """Return all form fields as a list of dictionaries."""
-        return [{'label': field.label, 'type': field.field_type} for field in self.form_fields.all()]
+        return self.custom_form_fields.all()
+    
+    def get_form(self, *args, **kwargs):
+        form = super().get_form(*args, **kwargs)
+        
+        form_fields = {field.label: field for field in self.custom_form_fields.all()}
 
-    def serve(self, request):
+        # Force `get_form_field()` to apply attributes
+        for field_name, field in form.fields.items():
+
+            form_field = form_fields.get(field.label)  # Fetch stored model field
+
+            # Apply regex validation if `regex_validator` is set
+            if form_field and hasattr(form_field, "regex_validator") and form_field.regex_validator:
+                print("apply regex validator to: ", field_name)
+                field.validators.append(RegexValidator(
+                    regex=form_field.regex_validator,
+                    message=f"Input must match pattern."
+                ))
+                
+
+            if hasattr(field, 'widget'):
+                widget_type = field.widget.__class__.__name__  # Get the widget class name
+                # Apply Bootstrap classes dynamically
+                if widget_type in ["TextInput", "EmailInput", "NumberInput", "URLInput"]:
+                    field.widget.attrs.update({"class": "form-control"})
+                elif widget_type in ["Textarea"]:
+                    field.widget.attrs.update({"class": "form-control text-area"})
+                elif widget_type in ["CheckboxInput"]:
+                    field.widget.attrs.update({"class": "form-check-input"})
+                elif widget_type in ["Select"]:
+                    field.widget.attrs.update({"class": "form-select"})
+                else:
+                    field.widget.attrs.update({"class": "form-control"})  # Default
+
+        return form 
+
+    def serve(self, request, *args, **kwargs):
+        """Override the default Wagtail form processing."""
+        form = self.get_form(request.POST or None)
+
         if request.method == "POST":
-            submitted_data = {key: request.POST[key] for key in request.POST if key != "csrfmiddlewaretoken"}
-            
-            # Save submission in database
-            FormSubmission.objects.create(page=self, data=submitted_data)
+            if form.is_valid():
+                print("Form is valid! Saving...")
+                messages.success(request, "Submission Successful!")
+                self.process_form_submission(form)
+                return redirect(self.url)  # Save submission only if valid
+            else:
+                print("Form validation failed! Errors:", form.errors)
+                return render(request, "form/form_page.html", {"page": self, "form": form})
 
-            # Show success message
-            messages.success(request, "Form submitted successfully!")
-
-            return HttpResponseRedirect(self.url)  # Redirect to refresh page after submission
-
-        return render(request, "website/form_page.html", {"page": self})
+        return super().serve(request, *args, **kwargs)
