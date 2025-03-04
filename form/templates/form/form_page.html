@@ -43,8 +43,21 @@
                         {% elif field|widget_type == "CheckboxSelectMultiple" %}
                             <label class="form-label">{{ field.label }}</label>
                             {% for widget in field.subwidgets %}
-                                <div class="mb-2">
+                                <div class="form-check">
                                     <input type="checkbox"
+                                        id="{{ widget.data.attrs.id }}"
+                                        name="{{ widget.data.name }}"
+                                        value="{{ widget.data.value }}"
+                                        class="form-check-input"
+                                        {% if widget.data.attrs.checked %}checked{% endif %}>
+                                    <label for="{{ widget.data.attrs.id }}" class="form-check-label">{{ widget.data.label }}</label>
+                                </div>
+                            {% endfor %}
+                        {% elif field|widget_type == "RadioSelect" %}
+                            <label class="form-label">{{ field.label }}</label>
+                            {% for widget in field.subwidgets %}
+                                <div class="form-check">
+                                    <input type="radio"
                                         id="{{ widget.data.attrs.id }}"
                                         name="{{ widget.data.name }}"
                                         value="{{ widget.data.value }}"

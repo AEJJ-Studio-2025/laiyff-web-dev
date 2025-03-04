@@ -76,9 +76,6 @@ class FormPage(AbstractEmailForm):
             if hasattr(field, 'widget'):
                 widget_type = field.widget.__class__.__name__
 
-                pprint(vars(field))
-                print("--------------------------------------------------")
-
                 # Apply Bootstrap classes dynamically
                 if widget_type == "Select" or widget_type == "SelectMultiple":
                     field.widget.attrs.update({"class": "form-control", "style": "max-width: 300px"})
