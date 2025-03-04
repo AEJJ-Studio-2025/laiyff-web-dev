@@ -12,6 +12,7 @@ from wagtail.admin.panels import (
 from wagtail.fields import RichTextField
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
 from django.core.validators import RegexValidator
+from pprint import pprint
 
 
 class FormField(AbstractFormField):
@@ -58,46 +59,42 @@ class FormPage(AbstractEmailForm):
     
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
-        
+
         form_fields = {field.label: field for field in self.custom_form_fields.all()}
 
-        # Force `get_form_field()` to apply attributes
         for field_name, field in form.fields.items():
+            form_field = form_fields.get(field.label)
 
-            form_field = form_fields.get(field.label)  # Fetch stored model field
-
-            # Apply regex validation if `regex_validator` is set
+            # Apply regex validation
             if form_field and hasattr(form_field, "regex_validator") and form_field.regex_validator:
                 field.validators.append(RegexValidator(
                     regex=form_field.regex_validator,
-                    message=f"Input must match pattern."
+                    message="Input must match pattern."
                 ))
-                
 
-            # print(field.widget.render("hello", 1))
-            # print("------------------------------------------------------------------------------------")
+            # Determine widget type
             if hasattr(field, 'widget'):
-                widget_type = field.widget.__class__.__name__  # Get the widget class name
-                print(widget_type)
+                widget_type = field.widget.__class__.__name__
+
+                pprint(vars(field))
+                print("--------------------------------------------------")
+
                 # Apply Bootstrap classes dynamically
-                if widget_type == "CheckboxInput":
-                    pass
-                elif widget_type == "Select":
-                    field.widget.attrs.update({"class": "form-select", "style": "max-width: 200px"})
-                elif widget_type == "SelectMultiple":
+                if widget_type == "Select" or widget_type == "SelectMultiple":
                     field.widget.attrs.update({"class": "form-control", "style": "max-width: 300px"})
+                elif widget_type == "CheckboxInput":
+                    field.widget.attrs.update({"class": "form-check-input"})
                 elif widget_type in ["TextInput", "EmailInput", "NumberInput", "URLInput"]:
                     field.widget.attrs.update({"class": "form-control"})
                 elif widget_type in ["Textarea"]:
                     field.widget.attrs.update({"class": "form-control text-area"})
-                elif widget_type in ["CheckboxInput"]:
-                    field.widget.attrs.update({"class": "form-check-input"})
-                elif widget_type in ["Select"]:
+                elif widget_type == "Select":
                     field.widget.attrs.update({"class": "form-select"})
                 else:
                     field.widget.attrs.update({"class": "form-control"})  # Default
 
         return form 
+
 
     def serve(self, request, *args, **kwargs):
         """Override the default Wagtail form processing."""
