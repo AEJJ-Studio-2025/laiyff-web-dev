@@ -68,17 +68,25 @@ class FormPage(AbstractEmailForm):
 
             # Apply regex validation if `regex_validator` is set
             if form_field and hasattr(form_field, "regex_validator") and form_field.regex_validator:
-                print("apply regex validator to: ", field_name)
                 field.validators.append(RegexValidator(
                     regex=form_field.regex_validator,
                     message=f"Input must match pattern."
                 ))
                 
 
+            # print(field.widget.render("hello", 1))
+            # print("------------------------------------------------------------------------------------")
             if hasattr(field, 'widget'):
                 widget_type = field.widget.__class__.__name__  # Get the widget class name
+                print(widget_type)
                 # Apply Bootstrap classes dynamically
-                if widget_type in ["TextInput", "EmailInput", "NumberInput", "URLInput"]:
+                if widget_type == "CheckboxInput":
+                    pass
+                elif widget_type == "Select":
+                    field.widget.attrs.update({"class": "form-select", "style": "max-width: 200px"})
+                elif widget_type == "SelectMultiple":
+                    field.widget.attrs.update({"class": "form-control", "style": "max-width: 300px"})
+                elif widget_type in ["TextInput", "EmailInput", "NumberInput", "URLInput"]:
                     field.widget.attrs.update({"class": "form-control"})
                 elif widget_type in ["Textarea"]:
                     field.widget.attrs.update({"class": "form-control text-area"})
