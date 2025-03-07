@@ -1,7 +1,8 @@
 from django.db import models
-from django.utils.text import slugify
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.core.mail import send_mail
 from wagtail.admin.panels import FieldPanel, InlinePanel
 from modelcluster.fields import ParentalKey
 from modelcluster.fields import ParentalKey
@@ -10,8 +11,9 @@ from wagtail.admin.panels import (
     InlinePanel, MultiFieldPanel
 )
 from wagtail.fields import RichTextField
-from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
+from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField, AbstractForm
 from django.core.validators import RegexValidator
+from wagtail.contrib.forms.models import FormSubmission
 from pprint import pprint
 
 
@@ -41,15 +43,7 @@ class FormPage(AbstractEmailForm):
 
     content_panels = AbstractEmailForm.content_panels + [
         FieldPanel('intro'),
-        InlinePanel('custom_form_fields', label="Form fields"),
-        FieldPanel('thank_you_text'),
-        MultiFieldPanel([
-            FieldRowPanel([
-                FieldPanel('from_address', classname="col6"),
-                FieldPanel('to_address', classname="col6"),
-            ]),
-            FieldPanel('subject'),
-        ], "Email"),
+        InlinePanel('custom_form_fields', label="Form fields")
     ]
 
     template = "form/form_page.html"
@@ -62,7 +56,7 @@ class FormPage(AbstractEmailForm):
 
         form_fields = {field.label: field for field in self.custom_form_fields.all()}
 
-        for field_name, field in form.fields.items():
+        for _, field in form.fields.items():
             form_field = form_fields.get(field.label)
 
             # Apply regex validation
@@ -99,8 +93,9 @@ class FormPage(AbstractEmailForm):
 
         if request.method == "POST":
             if form.is_valid():
-                messages.success(request, "Submission Successful!")
+                form.cleaned_data["Title"] = self.title
                 self.process_form_submission(form)
+                messages.success(request, "Submission Successful!")
                 return redirect(self.url)
             else:
                 return render(request, "form/form_page.html", {"page": self, "form": form})
