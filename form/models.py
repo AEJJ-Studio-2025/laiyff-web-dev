@@ -99,12 +99,11 @@ class FormPage(AbstractEmailForm):
 
         if request.method == "POST":
             if form.is_valid():
-                print("Form is valid! Saving...")
                 messages.success(request, "Submission Successful!")
                 self.process_form_submission(form)
-                return redirect(self.url)  # Save submission only if valid
+                return redirect(self.url)
             else:
-                print("Form validation failed! Errors:", form.errors)
                 return render(request, "form/form_page.html", {"page": self, "form": form})
 
         return super().serve(request, *args, **kwargs)
+    
