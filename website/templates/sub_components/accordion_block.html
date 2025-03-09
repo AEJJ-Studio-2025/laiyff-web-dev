@@ -1,6 +1,7 @@
 {% load wagtailcore_tags %}
+{% load static %}
 
-<link rel="stylesheet" href="../static/css/accordion_block.css">
+<link rel="stylesheet" href="{% static 'css/accordion_block.css' %}">
 
 <div class="accordion" id="accordionExample">
     {% for item in value.items %}

@@ -25,5 +25,4 @@ class ContentBlock(blocks.StructBlock):
 # Custom StreamBlock to enforce constraints
 class NormalPageStreamBlock(blocks.StreamBlock):
     """A StreamBlock that allows only 0 or 1 HeroSectionBlock and multiple other blocks"""
-    hero_section = blocks.ListBlock(HeroSectionBlock(), max_num=1, required=False)
     content_block = blocks.ListBlock(ContentBlock(), required=False)

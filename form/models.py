@@ -1,20 +1,16 @@
 from django.db import models
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.core.mail import send_mail
+from django.utils.timezone import now
 from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.models import Page
 from modelcluster.fields import ParentalKey
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import (
-    FieldPanel, FieldRowPanel,
-    InlinePanel, MultiFieldPanel
-)
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.fields import RichTextField
-from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField, AbstractForm
+from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField, AbstractFormSubmission
 from django.core.validators import RegexValidator
-from wagtail.contrib.forms.models import FormSubmission
-from pprint import pprint
+import json
 
 
 class FormField(AbstractFormField):
@@ -35,6 +31,29 @@ class FormField(AbstractFormField):
         FieldPanel("help_text"), 
         FieldPanel("regex_validator")
     ]
+
+
+class FormPageSubmission(models.Model):
+    form_page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="submissions")
+    form_data = models.JSONField(default=dict)
+    submit_time = models.DateTimeField(default=now)
+
+    panels = [
+        FieldPanel("form_page"),
+        FieldPanel("form_data"),
+        FieldPanel("submit_time"),
+    ]
+
+    def __str__(self):
+        return f"Submission {self.id} for {self.form_page.title} on {self.submit_time.strftime('%Y-%m-%d %H:%M:%S')}"
+
+    def formatted_data(self):
+        """Return formatted JSON for display in the admin"""
+        return json.dumps(self.form_data, indent=4)
+
+    class Meta:
+        verbose_name = "Form Submission"
+        verbose_name_plural = "Form Submissions"
 
 
 class FormPage(AbstractEmailForm):
@@ -85,6 +104,15 @@ class FormPage(AbstractEmailForm):
                     field.widget.attrs.update({"class": "form-control"})  # Default
 
         return form 
+    
+
+    def process_form_submission(self, form):
+        """Save submission data into the database."""
+        FormPageSubmission.objects.create(
+            page=self,
+            form_data=form.cleaned_data,
+            submit_time=now(),
+        )
 
 
     def serve(self, request, *args, **kwargs):

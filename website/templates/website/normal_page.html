@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
+{% load static %}
 
 {% block content %}
-<link rel="stylesheet" href="../static/css/normal_page.css">
+<link rel="stylesheet" href="{% static 'css/normal_page.css' %}">
     
 <div class="hero-section">
     {% if page.heroType == "Image" and page.heroSectionImage %}
