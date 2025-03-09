@@ -109,7 +109,7 @@ class FormPage(AbstractEmailForm):
     def process_form_submission(self, form):
         """Save submission data into the database."""
         FormPageSubmission.objects.create(
-            page=self,
+            form_page=self,
             form_data=form.cleaned_data,
             submit_time=now(),
         )
@@ -121,7 +121,6 @@ class FormPage(AbstractEmailForm):
 
         if request.method == "POST":
             if form.is_valid():
-                form.cleaned_data["Title"] = self.title
                 self.process_form_submission(form)
                 messages.success(request, "Submission Successful!")
                 return redirect(self.url)
