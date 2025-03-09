@@ -1,0 +1,12 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-left: 25%;
+    padding-right: 20%;
+}
+
+.form-group {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}

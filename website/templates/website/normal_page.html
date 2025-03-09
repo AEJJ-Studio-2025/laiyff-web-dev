@@ -2,9 +2,54 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <div class="normal-page">
-        {% for block in page.components %}
-            {% include_block block %}
-        {% endfor %}
+<link rel="stylesheet" href="../static/css/normal_page.css">
+    
+<div class="hero-section">
+    {% if page.heroType == "Image" and page.heroSectionImage %}
+        <div class="hero-image" style="background-image: url('{{ page.heroSectionImage.url }}');">
+            <h1 class="hero-title">{{ page.heroTitle }}</h1>
+        </div>
+
+    {% elif page.heroType == "Video" and page.heroSectionVideo %}
+        <div class="hero-video">
+            <video autoplay muted loop>
+                <source src="{{ page.heroSectionVideo.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <h1 class="hero-title">{{ page.heroTitle }}</h1>
+        </div>
+
+    {% elif page.heroType == "Carousel" %}
+    <div class="hero-carousel">
+        <h1 class="hero-title">{{ page.heroTitle }}</h1>
+        <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for image in page.carousel_images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ image.image.file.url }}" class="d-block w-100" alt="Carousel Image">
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
     </div>
+    {% endif %}
+</div>
+
+<div class="page-body">
+    {{ page.body|richtext }}
+</div>
+
+<div class="components">
+    {% for block in page.components %}
+        {{ block }}
+    {% endfor %}
+</div>
 {% endblock %}
