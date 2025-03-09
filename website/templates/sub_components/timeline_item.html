@@ -1,4 +1,6 @@
-<link rel="stylesheet" href="../static/css/timeline_item.css">
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/timeline_item.css' %}">
 
 <div class="timeline-item-content">
     <span class="event-date">{{ value.event_date }}</span>
