@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "base",
     "website",
     "general_page",
+    "nightfury",
     "wagtail_modeladmin",
     "wagtailmenus",
     "search",

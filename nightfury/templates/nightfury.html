@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/nightfury.css' %}">
+
+<div class="blog-container">
+    {% if page.feature_image %}
+        <div class="feature-image">
+            {% image page.feature_image original as img %}
+            <img src="{{ img.url }}" alt="Feature Image">
+        </div>
+    {% endif %}
+
+    <h1>{{ page.title }}</h1>
+    <p class="blog-meta">By {{ page.author }} | Published on {{ page.publication_date }} | Views: {{ page.views_count }}</p>
+    <p><strong>Category:</strong> {{ page.category }}</p>
+
+    {% if page.excerpt %}
+        <blockquote class="excerpt">{{ page.excerpt }}</blockquote>
+    {% endif %}
+
+    {% if page.body %}
+        <div class="blog-content">{{ page.body|richtext }}</div>
+    {% endif %}
+
+    {% if page.additional_info %}
+        <section class="additional-info">
+            <h2>More Information</h2>
+            {% for block in page.additional_info %}
+                <div class="collapsible-section">
+                    <div class="collapsible-header" onclick="toggleCollapse(this)">
+                        <h3>{% if block.block_type == "heading" %}{{ block.value }}{% else %}Section{% endif %}</h3>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    {% if block.block_type == "paragraph" %}
+                        <div class="collapsible-content">
+                            <p>{{ block.value|richtext }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    {% if page.gallery %}
+        <section class="gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-images">
+                {% for block in page.gallery %}
+                    {% for image in block.value %}
+                        {% image image fill-300x200 %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if page.testimonials %}
+        <section class="testimonials">
+            <h2>Testimonials</h2>
+            {% for block in page.testimonials %}
+                <div class="testimonial">
+                    <blockquote>{{ block.value.quote|richtext }}</blockquote>
+                    <p><strong>- {{ block.value.author }}</strong></p>
+                </div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    {% if page.call_to_action %}
+        <section class="call-to-action">
+            {% for block in page.call_to_action %}
+                <a class="cta-button" href="{{ block.value.cta_link }}">{{ block.value.cta_text }}</a>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    {% if page.tags %}
+        <div class="tags">
+            <strong>Tags:</strong>
+            {% for tag in page.tags %}
+                <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="social-share">
+        <a href="#">Share on Facebook</a>
+        <a href="#">Share on Twitter</a>
+        <a href="#">Copy Link</a>
+    </div>
+
+    {% if page.related_articles %}
+        <div class="related-articles">
+            <h3>Related Articles</h3>
+            <ul>
+                {% for article in page.related_articles %}
+                    <li>
+                        {% if article.value.image %}
+                            {% image article.value.image fill-100x100 as related_img %}
+                            <img src="{{ related_img.url }}" alt="Related Article Image">
+                        {% endif %}
+                        <a href="{{ article.value.link }}">{{ article.value.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <footer class="page-footer">
+        <div class="footer-contact">
+            <h4>Contact Us</h4>
+            <p>Email: {{ settings.base.NavigationSettings.contact_email }}</p>
+            <p>Phone: {{ settings.base.NavigationSettings.contact_phone }}</p>
+            <p>{{ settings.base.NavigationSettings.address|richtext }}</p>
+        </div>
+
+        <div class="footer-social">
+            <h4>Follow Us</h4>
+            {% if settings.base.NavigationSettings.instagram_url %}
+                <a href="{{ settings.base.NavigationSettings.instagram_url }}">Instagram</a>
+            {% endif %}
+            {% if settings.base.NavigationSettings.facebook_url %}
+                <a href="{{ settings.base.NavigationSettings.facebook_url }}">Facebook</a>
+            {% endif %}
+            {% if settings.base.NavigationSettings.youtube_url %}
+                <a href="{{ settings.base.NavigationSettings.youtube_url }}">YouTube</a>
+            {% endif %}
+            {% if settings.base.NavigationSettings.twitter_url %}
+                <a href="{{ settings.base.NavigationSettings.twitter_url }}">Twitter</a>
+            {% endif %}
+        </div>
+
+        <div class="footer-copy">
+            <p>&copy; {{ settings.base.NavigationSettings.current_year }} Your Company. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+function toggleCollapse(element) {
+    const section = element.parentElement;
+    section.classList.toggle('active');
+    const icon = element.querySelector('.toggle-icon');
+    icon.textContent = section.classList.contains('active') ? '−' : '+';
+}
+</script>
+{% endblock %}
