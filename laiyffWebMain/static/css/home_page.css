@@ -58,21 +58,22 @@
 
 .accordion-container {
   width: 60%;
-  /* Set width to 60% */
   margin: 0 auto;
-  /* Center horizontally */
 }
 
 .accordion-button {
   font-size: 20px;
-  /* Change title text size */
   font-weight: bold;
-  /* Make the title bold */
 }
 
 .accordion-body {
   font-size: 18px;
-  /* Change content text size */
   line-height: 1.6;
-  /* Improve readability */
+}
+
+.film-display {
+  margin-left: 20%;
+  margin-right: 20%;
+  margin-bottom: 20px;
+  width: 60%;
 }

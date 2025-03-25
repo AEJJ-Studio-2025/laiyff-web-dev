@@ -48,6 +48,13 @@
             {% endfor %}
         </div>
     </div>
+
+    <!-- film display section -->
+    <div class="film-display">
+      {% for film in page.films %}
+        {{ film }}
+      {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

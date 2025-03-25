@@ -1,0 +1,13 @@
+{% load wagtailimages_tags %}
+
+<div class="card film" style="width: 18rem;">
+  {% if value.image %}
+    {% image value.image original as film_image %}
+    <img src="{{ film_image.url }}" class="card-img-top" alt="{{ value.title }}">
+  {% endif %}
+
+  <div class="card-body">
+    <h5 class="card-title">{{ value.title }}</h5>
+    <a href="{{ value.href }}" class="card-link">Card link</a>
+  </div>
+</div>
