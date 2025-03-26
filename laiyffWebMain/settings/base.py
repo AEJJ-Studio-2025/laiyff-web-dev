@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "base",
     "form",
     "website",
+    "film",
     "wagtail_modeladmin",
     "wagtailmenus",
     "search",
