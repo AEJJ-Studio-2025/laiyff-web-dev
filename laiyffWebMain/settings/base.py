@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     "home",
     "base",
     "website",
-    "general_page",
+    "film",
     "wagtail_modeladmin",
     "wagtailmenus",
     "search",
