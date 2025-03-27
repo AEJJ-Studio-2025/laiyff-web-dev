@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="{% static 'css/film_page.css' %}">
 
 <div>
-  <div class="container">
-    <img src="{{ page.photo.url }}" alt="Film">
-  
-    <h1>{{ page.name }}</h1>
-  
-    {{ page.description|richtext }}
-  </div>
+    <div class="container">
+        <img src="{{ page.photo.url }}" alt="Film">
+
+        <h1>{{ page.name }}</h1>
+
+        {{ page.description|richtext }}
+    </div>
 </div>
 
 {% endblock %}
