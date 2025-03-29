@@ -1,4 +1,7 @@
 env/
 __pycache__
 db.sqlite3
-migrations
+form/migrations
+film/migrations
+website/migrations
+.vscode/
