@@ -9,52 +9,69 @@
 <link rel="stylesheet" href="{% static 'css/home_page.css' %}">
 
 
-<div class="home">
-    <!-- Hero Section with Video Background -->
-    <div class="hero">
-        {% if page.heroSectionVideo %}
-            <video autoplay loop muted playsinline>
-                <source src="{{ page.heroSectionVideo.url }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        {% endif %}
-        <div class="hero-content">
-            {{ page.heroText }}
-        </div>
-    </div>
-
-    <!-- Intro Section -->
-    <div class="intro-section">
-        <!-- <h1>Los Angeles International Youth Film Festival</h1> -->
-        <p>{{ page.introText }}</p>
-    </div>
-
-    <!-- Accordion Section -->
-    <div class="accordion-container" style="margin-bottom: 50px; margin-top: 50px;">
-        <div class="accordion" id="accordionFlushExample">
-            {% for title, content in page.get_accordion_pairs %}
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
-                            {{ title }}
-                        </button>
-                    </h2>
-                    <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionFlushExample">
-                        <div class="accordion-body">
-                            {{ content|richtext }}
-                        </div>
-                    </div>
+<div class="hero-carousel position-relative bg-black" style="height: 1000px; overflow: hidden;">
+    <div id="carouselExample" class="carousel slide h-100" data-bs-ride="carousel">
+        <div class="carousel-inner h-100">
+            {% for image in page.carousel_images.all %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
+                    <img src="{{ image.image.file.url }}" 
+                        class="d-block mx-auto h-100 object-fit-contain bg-black" 
+                        style="width: 100%;" 
+                        alt="Carousel Image">
                 </div>
             {% endfor %}
         </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev" style="z-index: 10;">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next" style="z-index: 10;">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 
-    <!-- film display section -->
-    <div class="film-display">
-      {% for film in page.films %}
-        {{ film }}
-      {% endfor %}
+    <!-- Text overlay -->
+    <h1 class="hero-title position-absolute top-50 start-50 translate-middle text-white text-center">
+        {{ page.heroText }}
+    </h1>
+</div>
+
+
+<!-- Intro Section -->
+<div class="intro-section">
+    <!-- <h1>Los Angeles International Youth Film Festival</h1> -->
+    <p>{{ page.introText }}</p>
+</div>
+
+<!-- Accordion Section -->
+<div class="accordion-container" style="margin-bottom: 50px; margin-top: 50px;">
+    <div class="accordion" id="accordionFlushExample">
+        {% for title, content in page.get_accordion_pairs %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                        {{ title }}
+                    </button>
+                </h2>
+                <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        {{ content|richtext }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </div>
+
+<!-- film display section -->
+<div class="film-display">
+  {% for film in page.films %}
+    {{ film }}
+  {% endfor %}
+</div>
+
 
 {% endblock %}
