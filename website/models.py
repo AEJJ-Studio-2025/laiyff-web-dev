@@ -9,7 +9,7 @@ from wagtail.images.models import Image
 
 
 class CarouselImages(models.Model):
-    Page = ParentalKey("NormalPage", on_delete=models.CASCADE, related_name="carousel_images")
+    normal_page = ParentalKey("NormalPage", on_delete=models.CASCADE, related_name="carousel_images")
     image = models.ForeignKey(Image, on_delete=models.CASCADE, related_name="+")
 
     panels = [
