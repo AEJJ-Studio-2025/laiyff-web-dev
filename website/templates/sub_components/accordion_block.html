@@ -1,4 +1,7 @@
 {% load wagtailcore_tags %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/accordion_block.css' %}">
 
 <div class="accordion" id="accordionExample">
     {% for item in value.items %}
@@ -19,28 +22,3 @@
         </div>
     {% endfor %}
 </div>
-
-<style>
-    .accordion {
-        width: 100%;
-        max-width: 800px;
-        margin: auto;
-        margin-bottom: 20px;
-    }
-
-    .accordion-button {
-        font-size: 18px;
-        font-weight: bold;
-        background-color: #f8f9fa;
-        color: #333;
-        border: none;
-    }
-
-    .accordion-body {
-        font-size: 16px;
-        line-height: 1.5;
-        padding: 15px;
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-    }
-</style>
