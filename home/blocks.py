@@ -6,7 +6,7 @@ class FilmDisplayBlock(blocks.StructBlock):
     """Block for film display"""
     title = blocks.CharBlock(required=True, help_text="Film Title")
     image = ImageChooserBlock(required=False, help_text="Optional card image")
-    href = blocks.CharBlock(required=True, help_text="Redirect to: ")
+    href = blocks.CharBlock(required=True, help_text="Redirect to: ", default="https://www.")
 
     class Meta:
         template = "blocks/film_display_block.html"
