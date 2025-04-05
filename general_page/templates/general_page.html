@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <link rel="stylesheet" href="/static/css/general_page.css">
+
+    <div class="container">
+        {% if page.feature_image %}
+            <div class="feature-image">
+                {% image page.feature_image original as img %}
+                <img src="{{ img.url }}" alt="Feature Image">
+            </div>
+        {% endif %}
+
+        <h1>{{ page.title }}</h1>
+        
+        {% if page.body %}
+            <div class="body-content">{{ page.body|richtext }}</div>
+        {% endif %}
+
+        {% if page.additional_info %}
+            <div class="additional-info">
+                {% for block in page.additional_info %}
+                    {% if block.block_type == "heading" %}
+                        <h2>{{ block }}</h2>
+                    {% elif block.block_type == "paragraph" %}
+                        <p>{{ block }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if page.testimonials %}
+            <div class="testimonials">
+                {% for testimonial in page.testimonials %}
+                    <blockquote>
+                        <p>{{ testimonial.value.quote }}</p>
+                        <cite>- {{ testimonial.value.author }}</cite>
+                    </blockquote>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if page.gallery %}
+            <div class="gallery">
+                {% for gallery_block in page.gallery %}
+                    {% for image in gallery_block.value %}
+                        {% image image original as img %}
+                        <img src="{{ img.url }}" alt="Gallery Image">
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if page.testimonials %}
+            <div class="testimonials">
+                {% for testimonial in page.testimonials %}
+                    <blockquote>
+                        <p>{{ testimonial.value.quote }}</p>
+                        <cite>- {{ testimonial.value.author }}</cite>
+                    </blockquote>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if page.call_to_action %}
+            <div class="call-to-action">
+                {% for cta in page.call_to_action %}
+                    <a href="{{ cta.value.cta_link }}" class="cta-button">{{ cta.value.cta_text }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
