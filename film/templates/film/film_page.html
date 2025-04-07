@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% load static %}
+{% load filters %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/film_page.css' %}">
+
+<div>
+    <div class="container">
+        <div class="poster">
+            <img src="{{ page.photo.url }}" alt="Film">
+        </div>
+        <div class="details">
+            <h1>{{ page.name }}</h1>
+            <h3><strong>Director:</strong> {{ page.director }}</h3>
+            <h3><strong>Release Year:</strong> {{ page.released_year }}</h3>
+            <h3>Genres</h3>
+            <ul>
+                {% for genre in page.genres|split:"," %}
+                    <li>{{ genre|trim }}</li>
+                {% empty %}
+                    <li>No genres listed.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="richtext">
+            {{ page.description|richtext }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
