@@ -1,84 +1,13 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
+{% load static %}
 
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
 
-<style>
-    .hero {
-        position: relative;
-        width: 100%;
-        height: 540px;
-        overflow: hidden;
-    }
+<link rel="stylesheet" href="{% static 'css/home_page.css' %}">
 
-    .hero video {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: blur(8px);
-        z-index: -1;
-    }
-
-    .hero-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        text-align: center;
-        font-size: 3rem;
-        font-weight: bold;
-        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
-    }
-
-    .intro-section {
-        display: flex;
-        padding-top: 50px;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        width: 60%;
-        margin: 0 auto;
-        text-align: center;
-    }
-
-    .intro-section h1 {
-        padding-bottom: 25px;
-    }
-
-    .intro-section p {
-        font-size: 25px;
-    }
-
-    .content-section {
-        max-width: 800px;
-        margin: 50px auto;
-        padding: 20px;
-        font-size: 18px;
-        line-height: 1.6;
-    }
-
-    .accordion-container {
-        width: 60%;  /* Set width to 60% */
-        margin: 0 auto;  /* Center horizontally */
-    }
-
-    .accordion-button {
-        font-size: 20px;  /* Change title text size */
-        font-weight: bold; /* Make the title bold */
-    }
-
-    .accordion-body {
-        font-size: 18px;  /* Change content text size */
-        line-height: 1.6;  /* Improve readability */
-    }
-</style>
 
 <div class="home">
     <!-- Hero Section with Video Background -->
@@ -90,13 +19,13 @@
             </video>
         {% endif %}
         <div class="hero-content">
-            Welcome to Los Angeles International Youth Film Festival
+            {{ page.heroText }}
         </div>
     </div>
 
     <!-- Intro Section -->
     <div class="intro-section">
-        <h1>Los Angeles International Youth Film Festival</h1>
+        <!-- <h1>Los Angeles International Youth Film Festival</h1> -->
         <p>{{ page.introText }}</p>
     </div>
 
@@ -118,6 +47,13 @@
                 </div>
             {% endfor %}
         </div>
+    </div>
+
+    <!-- film display section -->
+    <div class="film-display">
+      {% for film in page.films %}
+        {{ film }}
+      {% endfor %}
     </div>
 </div>
 
