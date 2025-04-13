@@ -1,0 +1,8 @@
+<div class="custom-radio">
+    {% for widget in widget.subwidgets %}
+        <div class="form-check">
+            <input type="radio" name="{{ widget.name }}" value="{{ widget.value }}" id="{{ widget.attrs.id }}" class="form-check-input">
+            <label class="form-check-label" for="{{ widget.attrs.id }}">{{ widget.label }}</label>
+        </div>
+    {% endfor %}
+</div>

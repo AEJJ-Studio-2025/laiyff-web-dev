@@ -1,4 +1,7 @@
 env/
 __pycache__
 db.sqlite3
-migrations
+media
+.vscode
+**/migrations/*.py 
+!**/migrations/__init__.py
