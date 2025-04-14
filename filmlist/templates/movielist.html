@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/filmlist.css' %}">
+
+<div class="movie-list-container">
+
+  <!-- Filter Bar (dynamic) -->
+  <div class="filter-bar">
+    <span>Filter by:</span>
+    <a class="filter-tag {% if not active_category %}active{% endif %}"
+       href="?date={{ selected_date|date:'Y-m-d' }}">All</a>
+    {% for cat in available_categories %}
+      {% with cat_lower=cat|lower %}
+        <a class="filter-tag {% if active_category == cat_lower %}active{% endif %}"
+           href="?date={{ selected_date|date:'Y-m-d' }}&category={{ cat_lower }}">
+          {{ cat }}
+        </a>
+      {% endwith %}
+    {% endfor %}
+    <a class="filter-tag reset" href="?date={{ selected_date|date:'Y-m-d' }}">Clear Filters</a>
+  </div>
+
+  <!-- Date Scroller + Utility Buttons -->
+  <div class="top-controls">
+    <div class="date-scroll">
+      <a class="date-item today-jump" href="?date={{ today|date:'Y-m-d' }}{% if active_category %}&category={{ active_category }}{% endif %}">Today</a>
+      {% for date in available_dates_parsed %}
+        {% with date_str=date|stringformat:"s" %}
+          <a class="date-item {% if date_str == selected_date|stringformat:'s' %}active{% endif %}"
+             href="?date={{ date_str }}{% if active_category %}&category={{ active_category }}{% endif %}">
+            <div>{{ date|date:"D" }}</div>
+            <div>{{ date|date:"M d" }}</div>
+          </a>
+        {% endwith %}
+      {% endfor %}
+    </div>
+    <div class="top-meta">
+      <span class="movie-count">{{ movies_for_date|length }} movie{{ movies_for_date|length|pluralize }}</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="movie-header">
+    <h2>{{ date_label }} <span>{{ selected_date }}</span></h2>
+  </div>
+
+  <!-- Movie Grid -->
+  <div class="movie-grid">
+    {% for block in movies_for_date|dictsort:"value.title" %}
+      {% with movie=block.value %}
+        <div class="movie-card" style="animation: fadeIn 0.4s ease-in;">
+          {% if movie.image %}
+            <div class="movie-poster">
+              {% image movie.image original as poster %}
+              {% if movie.link %}
+                <a href="{{ movie.link }}" target="_blank" rel="noopener">
+                  <img src="{{ poster.url }}" alt="{{ movie.title }}">
+                </a>
+              {% else %}
+                <img src="{{ poster.url }}" alt="{{ movie.title }}">
+              {% endif %}
+            </div>
+          {% endif %}
+          <div class="movie-info">
+            <p class="movie-category">{{ movie.category }}</p>
+            <h3 class="movie-title">{{ movie.title }}</h3>
+            <p class="movie-director">{{ movie.director }}</p>
+            <div class="movie-times">
+              {% for time in movie.times %}
+                <span class="time-tag">{{ time }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endwith %}
+    {% empty %}
+      <div class="no-results">
+        <p>No movies found for this date and category.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<style>
+  .filter-tag.active {
+    background: #111;
+    color: #fff;
+    font-weight: bold;
+    border: 1px solid #000;
+  }
+
+  .filter-tag.reset {
+    background: #ffefef;
+    color: #c00;
+    margin-left: auto;
+  }
+
+  .today-jump {
+    font-weight: bold;
+    color: #0066cc;
+  }
+
+  .movie-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .movie-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .top-meta {
+    font-size: 0.9rem;
+    color: #666;
+    padding: 0 10px;
+  }
+
+  .no-results {
+    padding: 40px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #999;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+{% endblock %}

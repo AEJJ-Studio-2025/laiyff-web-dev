@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "film",
     "website",
     "general_page",
+    "filmlist",
     "nightfury",
     "wagtail_modeladmin",
     "wagtailmenus",
