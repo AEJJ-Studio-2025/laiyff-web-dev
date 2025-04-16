@@ -1,4 +1,7 @@
 {% load wagtailcore_tags %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/content_block.css' %}">
 
 <section class="content-block">
     <div class="container">
@@ -11,28 +14,3 @@
         {% endfor %}
     </div>
 </section>
-
-<style>
-    .content-block {
-        padding: 50px 0;
-        background-color: #f9f9f9;
-    }
-
-    .container {
-        max-width: 1100px;
-        margin: auto;
-        padding: 0 20px;
-    }
-
-    .content-block-title {
-        text-align: center;
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 30px;
-        color: #333;
-    }
-
-    .content-component {
-        margin-bottom: 40px;
-    }
-</style>
